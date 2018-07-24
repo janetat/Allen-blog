@@ -10,7 +10,7 @@ class Config:
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
-    SECRET_KEY = 'hard to guess'
+    SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard-to-guess'
 
     @staticmethod
     def init_app(app):
@@ -20,7 +20,9 @@ class Config:
 class DevelopmentConfig(Config):
     ENV = 'development'
     DEBUG = True
-
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(base_dir, 'app.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 class TestingConfig(Config):
     TESTRING = True
