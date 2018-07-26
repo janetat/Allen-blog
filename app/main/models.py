@@ -27,6 +27,7 @@ class User(db.Model, UserMixin):
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
+# 每次引用current_user, 都会触发这个函数
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))

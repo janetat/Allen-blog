@@ -2,9 +2,18 @@ from app.main import main
 from app import db
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, EditProfileForm
 from .models import User
 from werkzeug.urls import url_parse
+from datetime import datetime
+
+@main.before_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        # 不用db.session.add的原因是每次current_user都会调用@login_manager.user_loader(在models.py)里，里面有query.
+        db.session.commit()
+
 
 # 主页
 # 被login_required修饰的view function, 如果没有登录，则跳转到login_manager.login_view，且URL后面添加一个参数：next
@@ -54,7 +63,7 @@ def logout():
     return redirect(url_for('main.index'))
 
 # 注册
-@main.route('/register', methods=['GET', 'POST'])
+@main.route('/register/', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -71,7 +80,7 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 # 查看user profile
-@main.route('/user/<username>')
+@main.route('/user/<username>/')
 @login_required
 def user_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
@@ -79,4 +88,21 @@ def user_profile(username):
         {'author': user, 'body': 'Test post #1'},
         {'author': user, 'body': 'Test post #2'}
     ]
-    return render_template('user.html', user=user, posts=posts)
+    return render_template('profile.html', user=user, posts=posts)
+
+# 编辑user profile
+@main.route('/edit_profile/', methods=['GET', 'POST'])
+@login_required
+def edit_profile():
+    form = EditProfileForm()
+    if form.validate_on_submit():
+        current_user.username = form.username.data
+        current_user.about_me = form.about_me.data
+        # 不用db.session.add，因为每次调用current_user都会触发被@login_manager.user_loader修饰的函数(在models.py里面)
+        db.session.commit()
+        flash('Your changes have been saved.')
+        return redirect(url_for('main.user_profile', username=current_user.username))
+    elif request.method == 'GET':
+        form.username.data = current_user.username
+        form.about_me.data = current_user.about_me
+    return render_template('edit_profile.html', title='Edit Profile', form=form)
