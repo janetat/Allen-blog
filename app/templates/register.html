@@ -26,7 +26,7 @@
         <!--密码-->
         <p>
             {{ form.password.label }}<br>
-            {{ form.passwrod(size=32) }}<br>
+            {{ form.password(size=32) }}<br>
             {% for error in form.password.errors %}
                 <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
