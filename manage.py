@@ -3,7 +3,8 @@ from app import create_app, db
 from app.main.models import User, Post
 
 
-app = create_app(os.getenv('CONFIG') or 'default')
+app = create_app(os.getenv('CONFIG') or 'production')
+
 
 @app.shell_context_processor
 def make_shell_context():

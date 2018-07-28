@@ -18,6 +18,7 @@ class Config:
 
 
 class DevelopmentConfig(Config):
+    # 注意ENV这个变量:This is set by the FLASK_ENV environment variable and may not behave as expected if set in code. 实践看出，在代码中设置ENV并没有什么用.
     ENV = 'development'
     DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
@@ -30,11 +31,12 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+    # 注意ENV这个变量:This is set by the FLASK_ENV environment variable and may not behave as expected if set in code. 实践看出，在代码中设置ENV并没有什么用
+    ENV = 'production'
     DEBUG = False
-
-    @classmethod
-    def init_app(cls, app):
-        pass
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///' + os.path.join(base_dir, 'app.db')
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 
 config = {
