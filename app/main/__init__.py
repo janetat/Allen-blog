@@ -9,3 +9,4 @@ main = Blueprint('main', __name__)
 from app.main import views
 from app.main import models
 from app.main import forms
+from app.main import errors
