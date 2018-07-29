@@ -2,10 +2,28 @@
 
 {% block content %}
     <h1>Hi! {{ current_user.username }}!</h1>
+    <form action="" method="POST">
+        {{ form.hidden_tag() }}
+        <div>
+            <p>{{ form.title.label }}</p>
+            <p>{{ form.title(cols=32, rows=1) }}</p>
+            <p>{{ form.body.label }}</p>
+            <p>{{ form.body(cols=32, rows=4) }}</p>
+            {% for error in form.body.errors %}
+            <span style="color:red;">[{{ error }}]</span>
+            {% endfor %}
+            <p>{{ form.submit() }}</p>
+        </div>
+        <hr>
+    </form>
+
+
     {% for post in posts %}
     <div>
-        <h2> {{ post.title }}</h2>
-        <p> {{ post.body }} </p>
+        <h1>user: {{ post.author.username }}</h1>
+        <h2> title: {{ post.title }}</h2>
+        <p> body: {{ post.body }} </p>
+        <hr>
     </div>
     {% endfor %}
 {% endblock %}

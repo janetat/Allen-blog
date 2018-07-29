@@ -2,8 +2,8 @@ from app.main import main
 from app import db
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import LoginForm, RegistrationForm, EditProfileForm
-from .models import User
+from .forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
+from .models import User, Post
 from werkzeug.urls import url_parse
 from datetime import datetime
 
@@ -17,12 +17,20 @@ def before_request():
 
 # 主页
 # 被login_required修饰的view function, 如果没有登录，则跳转到login_manager.login_view，且URL后面添加一个参数：next
-@main.route('/')
-@main.route('/index/')
+@main.route('/', methods=['GET', 'POST'])
+@main.route('/index/', methods=['GET', 'POST'])
 @login_required
 def index():
-    posts = current_user.posts
-    return render_template('index.html', title='allen', posts=posts)
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(title=form.title.data, body=form.body.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        flash('You added a new post!')
+        return redirect(url_for('main.index'))
+
+    posts = current_user.followed_posts()
+    return render_template('index.html', title='Home page', posts=posts, form=form)
 
 # 登录
 @main.route('/login/', methods=['GET', 'POST'])
@@ -84,10 +92,7 @@ def register():
 @login_required
 def user_profile(username):
     user = User.query.filter_by(username=username).first_or_404()
-    posts = [
-        {'author': user, 'body': 'Test post #1'},
-        {'author': user, 'body': 'Test post #2'}
-    ]
+    posts = user.posts
     return render_template('profile.html', user=user, posts=posts)
 
 # 编辑user profile
