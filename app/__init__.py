@@ -2,6 +2,7 @@ from flask import Flask
 from flask_login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_bootstrap import Bootstrap
 from config import config
 from app.my_extensions.file_logger import FileLogger
 
@@ -10,6 +11,7 @@ login_manager = LoginManager()
 db = SQLAlchemy()
 migrate = Migrate()
 file_logger = FileLogger()
+bootstrap = Bootstrap()
 
 # 工厂函数，根据config生成app
 def create_app(config_name):
@@ -25,6 +27,7 @@ def create_app(config_name):
     login_manager.init_app(app)
     login_manager.login_view = 'main.login'
     file_logger.init_app(app)
+    bootstrap.init_app(app)
 
     # 注册蓝图（Flask模块化）
     from app.main import main as main_blueprint

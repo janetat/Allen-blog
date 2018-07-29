@@ -17,12 +17,14 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(120), index=True, unique=True)
     password_hash = db.Column(db.String(128))
+    # user.posts relationship is a query that is already set up by SQLAlchemy as a result of the db.relationship() definition in the User model.
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     about_me = db.Column(db.String(140))
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     # 第一个参数为右边的表(因为是自引用关系，所以是自己)，secondary是两表之间的关联表(自引用关系，多对多关系必有第三张表，就是关联表)
     # backref defines how this relationship will be accessed from the right side entity(secondary table).
     # SQLAlchemy ORM，使得followed这个relationship可以当成“列表”来操作。例如,user1.followed.append(user2), user1.followed.remove(user2)
+
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),

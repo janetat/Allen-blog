@@ -1,31 +1,27 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
-{% block content %}
-    <h1>Hi! {{ current_user.username }}!</h1>
-    {#分页#}
-    {% include('_pagination.html') %}
+{% block app_content %}
+    <h1>Hi, {{ current_user.username }}!</h1>
     {% if form %}
-    <form action="" method="POST">
-        {{ form.hidden_tag() }}
-        <div>
-            <p>{{ form.title.label }}</p>
-            <p>{{ form.title(cols=32, rows=1) }}</p>
-            <p>{{ form.body.label }}</p>
-            <p>{{ form.body(cols=32, rows=4) }}</p>
-            {% for error in form.body.errors %}
-            <span style="color:red;">[{{ error }}]</span>
-            {% endfor %}
-            <p>{{ form.submit() }}</p>
-        </div>
-        <hr>
-    </form>
+    {{ wtf.quick_form(form) }}
+    <br>
     {% endif %}
-
-
     {% for post in posts %}
-        {% include('_post.html') %}
-        <hr>
+        {% include '_post.html' %}
     {% endfor %}
-
-
+    <nav aria-label="...">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled{% endif %}">
+                <a href="{{ prev_url or '#' }}">
+                    <span aria-hidden="true">&larr;</span> Newer posts
+                </a>
+            </li>
+            <li class="next{% if not next_url %} disabled{% endif %}">
+                <a href="{{ next_url or '#' }}">
+                    Older posts <span aria-hidden="true">&rarr;</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
 {% endblock %}
