@@ -1,13 +1,6 @@
-2018-07-29 09:18:50,752 ERROR: Exception on / [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1193, in _execute_context
-    context)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 509, in do_execute
-    cursor.execute(statement, parameters)
-sqlite3.OperationalError: no such table: parent
-
-The above exception was the direct cause of the following exception:
-
+2018-07-29 11:20:57,810 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:21:39,032 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:22:03,199 ERROR: Exception on /user/xx/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
 Traceback (most recent call last):
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
     response = self.full_dispatch_request()
@@ -23,8 +16,8 @@ Traceback (most recent call last):
     return self.view_functions[rule.endpoint](**req.view_args)
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
     return func(*args, **kwargs)
-  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 33, in index
-    return render_template('index.html', title='Home page', posts=posts, form=form)
+  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 96, in user_profile
+    return render_template('profile.html', user=user, posts=posts)
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/templating.py", line 135, in render_template
     context, ctx.app)
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/templating.py", line 117, in _render
@@ -37,81 +30,85 @@ Traceback (most recent call last):
     reraise(exc_type, exc_value, tb)
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
     raise value.with_traceback(tb)
-  File "/home/allin/Code/Python/Allen_blog/app/templates/index.html", line 1, in top-level template code
+  File "/home/allin/Code/Python/Allen_blog/app/templates/profile.html", line 1, in top-level template code
     {% extends "base.html" %}
-  File "/home/allin/Code/Python/Allen_blog/app/templates/base.html", line 31, in top-level template code
+  File "/home/allin/Code/Python/Allen_blog/app/templates/base.html", line 32, in top-level template code
     {% block content %}{% endblock %}
-  File "/home/allin/Code/Python/Allen_blog/app/templates/index.html", line 17, in block "content"
-    {% for post in posts %}
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/orm/dynamic.py", line 247, in __iter__
-    return iter(self._clone(sess))
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 2988, in __iter__
-    return self._execute_and_instances(context)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/orm/query.py", line 3011, in _execute_and_instances
-    result = conn.execute(querycontext.statement, self._params)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 948, in execute
-    return meth(self, multiparams, params)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/sql/elements.py", line 269, in _execute_on_connection
-    return connection._execute_clauseelement(self, multiparams, params)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1060, in _execute_clauseelement
-    compiled_sql, distilled_params
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1200, in _execute_context
-    context)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1413, in _handle_dbapi_exception
-    exc_info
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 265, in raise_from_cause
-    reraise(type(exception), exception, tb=exc_tb, cause=cause)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/util/compat.py", line 248, in reraise
+  File "/home/allin/Code/Python/Allen_blog/app/templates/profile.html", line 25, in block "content"
+    {% include '_post.html' %}
+  File "/home/allin/Code/Python/Allen_blog/app/templates/_post.html", line 5, in top-level template code
+    <a href="{{ url_for('main.profile', username=post.author.username) }}">
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/helpers.py", line 356, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2061, in handle_url_build_error
+    reraise(exc_type, exc_value, tb)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
+    raise value
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/helpers.py", line 345, in url_for
+    force_external=external)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/werkzeug/routing.py", line 1776, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'main.profile' with values ['username']. Did you mean 'main.user_profile' instead?
+2018-07-29 11:22:04,722 ERROR: Exception on /user/xx/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
+Traceback (most recent call last):
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
+    raise value
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
+    return func(*args, **kwargs)
+  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 96, in user_profile
+    return render_template('profile.html', user=user, posts=posts)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/templating.py", line 135, in render_template
+    context, ctx.app)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/templating.py", line 117, in _render
+    rv = template.render(context)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/jinja2/asyncsupport.py", line 76, in render
+    return original_render(self, *args, **kwargs)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/jinja2/environment.py", line 1008, in render
+    return self.environment.handle_exception(exc_info, True)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/jinja2/environment.py", line 780, in handle_exception
+    reraise(exc_type, exc_value, tb)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/jinja2/_compat.py", line 37, in reraise
     raise value.with_traceback(tb)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1193, in _execute_context
-    context)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 509, in do_execute
-    cursor.execute(statement, parameters)
-sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: parent [SQL: 'SELECT parent.id AS parent_id, parent.title AS parent_title, parent.body AS parent_body, parent.timestamp AS parent_timestamp, parent.user_id AS parent_user_id \nFROM parent \nWHERE ? = parent.user_id'] [parameters: (1,)] (Background on this error at: http://sqlalche.me/e/e3q8)
-2018-07-29 09:19:43,753 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:20:39,130 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:21:44,114 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:26:27,143 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:49:17,972 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:49:20,052 ERROR: Exception on /index/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
+  File "/home/allin/Code/Python/Allen_blog/app/templates/profile.html", line 1, in top-level template code
+    {% extends "base.html" %}
+  File "/home/allin/Code/Python/Allen_blog/app/templates/base.html", line 32, in top-level template code
+    {% block content %}{% endblock %}
+  File "/home/allin/Code/Python/Allen_blog/app/templates/profile.html", line 25, in block "content"
+    {% include '_post.html' %}
+  File "/home/allin/Code/Python/Allen_blog/app/templates/_post.html", line 5, in top-level template code
+    <a href="{{ url_for('main.profile', username=post.author.username) }}">
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/helpers.py", line 356, in url_for
+    return appctx.app.handle_url_build_error(error, endpoint, values)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2061, in handle_url_build_error
     reraise(exc_type, exc_value, tb)
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
     raise value
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 32, in index
-    posts = current_user.followed.posts
-AttributeError: 'AppenderBaseQuery' object has no attribute 'posts'
-2018-07-29 09:51:05,920 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:51:37,646 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:52:24,323 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:52:42,541 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:52:43,046 ERROR: Exception on /index/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
-    raise value
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 33, in index
-    print(current_user.followed.posts)
-AttributeError: 'AppenderBaseQuery' object has no attribute 'posts'
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/helpers.py", line 345, in url_for
+    force_external=external)
+  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/werkzeug/routing.py", line 1776, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.BuildError: Could not build url for endpoint 'main.profile' with values ['username']. Did you mean 'main.user_profile' instead?
+2018-07-29 11:22:20,053 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:27:24,711 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:27:56,304 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:28:31,783 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:29:21,299 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:29:30,043 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:29:44,030 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:31:11,118 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:31:35,712 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:32:09,264 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:32:32,734 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:33:51,287 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:35:07,941 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 11:35:20,642 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]

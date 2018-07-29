@@ -1,4 +1,4 @@
-2018-07-29 09:09:36,636 ERROR: Exception on /index/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
+2018-07-29 09:16:43,003 ERROR: Exception on / [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
 Traceback (most recent call last):
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1193, in _execute_context
     context)
@@ -68,4 +68,4 @@ Traceback (most recent call last):
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 509, in do_execute
     cursor.execute(statement, parameters)
 sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: parent [SQL: 'SELECT parent.id AS parent_id, parent.title AS parent_title, parent.body AS parent_body, parent.timestamp AS parent_timestamp, parent.user_id AS parent_user_id \nFROM parent \nWHERE ? = parent.user_id'] [parameters: (1,)] (Background on this error at: http://sqlalche.me/e/e3q8)
-2018-07-29 09:10:32,518 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
+2018-07-29 09:18:49,046 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]

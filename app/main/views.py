@@ -99,7 +99,7 @@ def user_profile(username):
 @main.route('/edit_profile/', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
-    form = EditProfileForm()
+    form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
@@ -150,3 +150,10 @@ def unfollow(username):
     db.session.commit()
     flash('unfollowing {} successful!'.format(username))
     return redirect(url_for('main.user_profile', username=username))
+
+# 发现
+@main.route('/explore')
+@login_required
+def explore():
+    posts = Post.query.order_by(Post.timestamp.desc()).all()
+    return render_template('explore.html', title='Explore', posts=posts)

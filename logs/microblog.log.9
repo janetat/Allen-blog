@@ -1,4 +1,4 @@
-2018-07-29 09:18:50,752 ERROR: Exception on / [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
+2018-07-29 09:09:28,212 ERROR: Exception on / [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
 Traceback (most recent call last):
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/base.py", line 1193, in _execute_context
     context)
@@ -68,50 +68,3 @@ Traceback (most recent call last):
   File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/sqlalchemy/engine/default.py", line 509, in do_execute
     cursor.execute(statement, parameters)
 sqlalchemy.exc.OperationalError: (sqlite3.OperationalError) no such table: parent [SQL: 'SELECT parent.id AS parent_id, parent.title AS parent_title, parent.body AS parent_body, parent.timestamp AS parent_timestamp, parent.user_id AS parent_user_id \nFROM parent \nWHERE ? = parent.user_id'] [parameters: (1,)] (Background on this error at: http://sqlalche.me/e/e3q8)
-2018-07-29 09:19:43,753 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:20:39,130 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:21:44,114 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:26:27,143 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:49:17,972 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:49:20,052 ERROR: Exception on /index/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
-    raise value
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 32, in index
-    posts = current_user.followed.posts
-AttributeError: 'AppenderBaseQuery' object has no attribute 'posts'
-2018-07-29 09:51:05,920 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:51:37,646 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:52:24,323 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:52:42,541 INFO: Microblog startup [in /home/allin/Code/Python/Allen_blog/app/my_extensions/file_logger.py:32]
-2018-07-29 09:52:43,046 ERROR: Exception on /index/ [GET] [in /home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py:1761]
-Traceback (most recent call last):
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 2292, in wsgi_app
-    response = self.full_dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1815, in full_dispatch_request
-    rv = self.handle_user_exception(e)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1718, in handle_user_exception
-    reraise(exc_type, exc_value, tb)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/_compat.py", line 35, in reraise
-    raise value
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1813, in full_dispatch_request
-    rv = self.dispatch_request()
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask/app.py", line 1799, in dispatch_request
-    return self.view_functions[rule.endpoint](**req.view_args)
-  File "/home/allin/Software/anaconda/envs/allen_blog/lib/python3.6/site-packages/flask_login/utils.py", line 261, in decorated_view
-    return func(*args, **kwargs)
-  File "/home/allin/Code/Python/Allen_blog/app/main/views.py", line 33, in index
-    print(current_user.followed.posts)
-AttributeError: 'AppenderBaseQuery' object has no attribute 'posts'
