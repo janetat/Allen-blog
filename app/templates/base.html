@@ -48,3 +48,9 @@
         {% block app_content %}{% endblock %}
     </div>
 {% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+{#    这个函数是flask_moment提供的导入moment.js文件。另一种方法是用<script>导入moment.js#}
+    {{ moment.include_moment() }}
+{% endblock %}
