@@ -10,6 +10,7 @@ class Config:
     DEBUG = False
     TESTING = False
     CSRF_ENABLED = True
+    POSTS_PER_PAGE = 5
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard-to-guess'
 
     @staticmethod

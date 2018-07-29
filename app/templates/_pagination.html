@@ -1,0 +1,14 @@
+<div>
+    {#分页#}
+    {% if prev_url %}
+        <a href="{{ prev_url }}">
+            <button>Previous page</button>
+        </a>
+    {% endif %}
+    {% if next_url %}
+        <a href="{{ next_url }}">
+            <button>Next page</button>
+        </a>
+    {% endif %}
+    <hr>
+</div>

@@ -3,8 +3,13 @@
 {% block content %}
     <h1>Hi! {{ current_user.username }}!</h1>
 
+    {#分页#}
+    {% include('_pagination.html') %}
+
     {% for post in posts %}
         {% include('_post.html') %}
         <hr>
     {% endfor %}
+
+
 {% endblock %}
