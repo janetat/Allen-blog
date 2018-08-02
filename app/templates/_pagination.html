@@ -2,12 +2,12 @@
     {#分页#}
     {% if prev_url %}
         <a href="{{ prev_url }}">
-            <button>Previous page</button>
+            <button type="button" class="btn btn-info">Previous page</button>
         </a>
     {% endif %}
     {% if next_url %}
         <a href="{{ next_url }}">
-            <button>Next page</button>
+            <button type="button" class="btn btn-info">Next page</button>
         </a>
     {% endif %}
     <hr>
