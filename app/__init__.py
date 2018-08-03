@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_bootstrap import Bootstrap
 from flask_moment import Moment
+from elasticsearch import Elasticsearch
 from config import config
 from app.my_extensions.file_logger import FileLogger
 
@@ -31,6 +32,9 @@ def create_app(config_name):
     file_logger.init_app(app)
     bootstrap.init_app(app)
     moment.init_app(app)
+    # 没有extension wraps elastisearch, 所以向app增加一个实例。全文搜索功能都写在search.py中，那个是抽象模块，可以换成其他引擎。
+    app.elasticsearch = Elasticsearch([app.config['ELASTICSEARCH_URL']]) if app.config['ELASTICSEARCH_URL'] else None
+
 
     # 注册蓝图（Flask模块化）
     from app.main import main as main_blueprint

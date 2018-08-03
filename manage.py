@@ -1,6 +1,6 @@
 import os
 from app import create_app, db
-from app.main.models import User, Post
+from app.models import User, Post
 from app.fake import fake_users, fake_posts
 
 app = create_app(os.getenv('CONFIG') or 'production')

@@ -12,6 +12,7 @@ class Config:
     CSRF_ENABLED = True
     POSTS_PER_PAGE = 5
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'hard-to-guess'
+    ELASTICSEARCH_URL = os.environ.get('ELASTICSEARCH_URL')
 
     @staticmethod
     def init_app(app):
@@ -25,6 +26,8 @@ class DevelopmentConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'sqlite:///' + os.path.join(base_dir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+
 
 class TestingConfig(Config):
     TESTRING = True

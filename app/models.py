@@ -3,13 +3,80 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from hashlib import md5
+from app.search import add_to_index, remove_from_index, query_index
 
+
+class SearchableMixin(object):
+    '''
+        glue layer between SQLALchemy and Elasticsearch，实现自动更新两边数据库
+        model Post继承这个Mixin, 被赋予这个mixin的能力
+
+        before_commit, after_commit 里面的commit指的是SQLALchemy session(即数据库中的事务，不同于HTTP的session)的commit
+
+        reindex的index指的是Elasticsearch中的术语
+    '''
+
+    @classmethod
+    def search(cls, expression, page, per_page):
+        '''
+        :param expression:
+        :param page:
+        :param per_page:
+        :return: 根据Elatsticsearch的id得到相对应的SQLAlchemy对象， 和总结果数
+        '''
+        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+        if total == 0:
+            return cls.query.filter_by(id=0), 0
+        when = []
+        for i in range(len(ids)):
+            when.append((ids[i], i))
+        # SQL的in, case语句, ensures that the results from the database come in the same order as the IDs are given.
+        return cls.query.filter(cls.id.in_(ids)).order_by(
+            db.case(when, value=cls.id)), total
+
+    @classmethod
+    def before_commit(cls, session):
+        '''
+            session.new, session.dirty, session.deleted都是sqlalchemy.orm.session自带的，当commit完session时会消失
+            所以用session._changes保存状态(added, modified and deleted objects)
+            在commit后update the Elasticsearch index
+        '''
+        session._changes = {
+            'add': list(session.new),
+            'update': list(session.dirty),
+            'delete': list(session.deleted)
+        }
+
+    @classmethod
+    def after_commit(cls, session):
+        for obj in session._changes['add']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['update']:
+            if isinstance(obj, SearchableMixin):
+                add_to_index(obj.__tablename__, obj)
+        for obj in session._changes['delete']:
+            if isinstance(obj, SearchableMixin):
+                remove_from_index(obj.__tablename__, obj)
+        session._changes = None
+
+    @classmethod
+    def reindex(cls):
+        # 例如Post.query, 用for遍历这个可迭代对象，就可得到所有的Post对象
+        for obj in cls.query:
+            add_to_index(cls.__tablename__, obj)
+
+
+# SQLAlchemy自带的事件模型
+db.event.listen(db.session, 'before_commit', SearchableMixin.before_commit)
+db.event.listen(db.session, 'after_commit', SearchableMixin.after_commit)
 
 # following和followed的关联表(第三张表), 因为是自引用关系(都是指向User表)，没有data只有foreign keys，所以不用model class.
 followers = db.Table('followers',
-    db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
-)
+                     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
+                     db.Column('followed_id', db.Integer, db.ForeignKey('user.id'))
+                     )
+
 
 class User(db.Model, UserMixin):
     __tablename__ = 'user'
@@ -33,7 +100,6 @@ class User(db.Model, UserMixin):
         backref=db.backref('followers', lazy='dynamic'),
         lazy='dynamic'
     )
-
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -72,13 +138,16 @@ class User(db.Model, UserMixin):
         own = Post.query.filter_by(user_id=self.id)
         return followed.union(own).order_by(Post.timestamp.desc())
 
+
 # 每次引用current_user, 都会触发这个函数
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
-class Post(db.Model):
+
+class Post(SearchableMixin ,db.Model):
     __tablename__ = 'post'
+    __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(32), index=True)
     body = db.Column(db.String(140))
@@ -87,5 +156,3 @@ class Post(db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
-
-

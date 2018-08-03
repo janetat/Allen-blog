@@ -1,11 +1,12 @@
 from app.main import main
 from app import db
-from flask import render_template, flash, redirect, url_for, request, current_app
+from flask import render_template, flash, redirect, url_for, request, current_app, g
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import LoginForm, RegistrationForm, EditProfileForm, PostForm
-from .models import User, Post
+from .forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, SearchForm
+from app.models import User, Post
 from werkzeug.urls import url_parse
 from datetime import datetime
+
 
 @main.before_request
 def before_request():
@@ -13,7 +14,10 @@ def before_request():
         current_user.last_seen = datetime.utcnow()
         # 不用db.session.add的原因是每次current_user都会调用@login_manager.user_loader(在models.py)里，里面有query.
         db.session.commit()
-
+        # 初始化全文搜索表单，但是只有登录的用户才可以在任意页面看见。存在g里面。
+        # g variable is specific to each request and each client
+        # 并且模板的context可以用g
+        g.search_form = SearchForm()
 
 # 主页
 # 被login_required修饰的view function, 如果没有登录，则跳转到login_manager.login_view，且URL后面添加一个参数：next
@@ -170,3 +174,19 @@ def explore():
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
     return render_template('explore.html', title='Explore', posts=posts.items, next_url=next_url, prev_url=prev_url)
 
+# 全文搜索
+# export ELASTICSEARCH_URL='http://localhost:9200'且开启Elasticsearch
+@main.route('/search')
+@login_required
+def search():
+    if not g.search_form.validate():
+        return redirect(url_for('main.explore'))
+    page = request.args.get('page', 1, type=int)
+    posts, total = Post.search(g.search_form.q.data, page,
+                               current_app.config['POSTS_PER_PAGE'])
+    next_url = url_for('main.search', q=g.search_form.q.data, page=page + 1) \
+        if total > page * current_app.config['POSTS_PER_PAGE'] else None
+    prev_url = url_for('main.search', q=g.search_form.q.data, page=page - 1) \
+        if page > 1 else None
+    return render_template('search.html', title='Search', posts=posts,
+                           next_url=next_url, prev_url=prev_url)

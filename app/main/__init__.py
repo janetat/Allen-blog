@@ -7,5 +7,4 @@ main = Blueprint('main', __name__)
 # https://segmentfault.com/q/1010000010937917
 # 狗书中文版P90
 from app.main import views
-from app.main import models
 from app.main import forms
