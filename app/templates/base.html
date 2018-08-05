@@ -62,4 +62,61 @@
     {{ super() }}
 {#    这个函数是flask_moment提供的导入moment.js文件。另一种方法是用<script>导入moment.js#}
     {{ moment.include_moment() }}
+
+
+    <script>
+    /* profile弹出框。用的是Bootstrap的popover组件，AJAX技术。
+    // a function to run when the page is loaded by wrapping it inside a $( ... ).
+     $( selector ).hover( handlerIn, handlerOut )
+    */
+    $(function () {
+        var timer = null;
+        var xhr = null;
+        $('.user_popup').hover(
+            function(event) {
+                // mouse in event handler
+                var elem = $(event.currentTarget);
+                timer = setTimeout(function() {
+                    timer = null;
+                    // 向/user/<username>/popup发起异步请求
+                    {#console.log(elem.find('a').attr('href'));#}
+                    xhr = $.ajax(
+                        // 构造/user/<username>/popup的链接
+                        elem.children('a').attr('href') + 'popup').done(
+                            function(data) {
+                                xhr = null;
+                                // 奇怪的是，popover(options)返回的是popover对象，但是还要调用popover('show')去显示它.
+                                elem.popover({
+                                    trigger: 'manual',
+                                    html: true,
+                                    animation: false,
+                                    container: elem,
+                                    content: data
+                                }).popover('show');
+                                flask_moment_render_all();
+                            }
+                        );
+                }, 100);
+            },
+
+            function(event) {
+                // mouse out event handler
+                var elem = $(event.currentTarget);
+                if (timer) {
+                    clearTimeout(timer);
+                    timer = null;
+                }
+                else if (xhr) {
+                    xhr.abort();
+                    xhr = null;
+                }
+                else {
+                    elem.popover('destroy');
+                }
+            }
+        );
+    });
+    </script>
 {% endblock %}
+
+
