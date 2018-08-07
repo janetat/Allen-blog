@@ -2,8 +2,8 @@ from app.main import main
 from app import db
 from flask import render_template, flash, redirect, url_for, request, current_app, g
 from flask_login import login_user, logout_user, current_user, login_required
-from .forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, SearchForm
-from app.models import User, Post
+from .forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, SearchForm, MessageForm
+from app.models import User, Post, Message
 from werkzeug.urls import url_parse
 from datetime import datetime
 
@@ -19,12 +19,16 @@ def before_request():
         # 并且模板的context可以用g
         g.search_form = SearchForm()
 
-# 主页
-# 被login_required修饰的view function, 如果没有登录，则跳转到login_manager.login_view，且URL后面添加一个参数：next
+
+
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/index/', methods=['GET', 'POST'])
 @login_required
 def index():
+    '''
+        主页
+        被login_required修饰的view function, 如果没有登录，则跳转到login_manager.login_view，且URL后面添加一个参数：next
+    '''
     form = PostForm()
     if form.validate_on_submit():
         post = Post(title=form.title.data, body=form.body.data, author=current_user)
@@ -39,11 +43,14 @@ def index():
     # url_for, if the names of those arguments are not referenced in the URL directly, then Flask will include them in the URL as query arguments.
     next_url = url_for('main.index', page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.index', page=posts.prev_num) if posts.has_prev else None
-    return render_template('index.html', title='Home page', form=form, posts=posts.items, next_url=next_url, prev_url=prev_url)
+    return render_template('index.html', title='Home page', form=form, posts=posts.items, next_url=next_url,
+                           prev_url=prev_url)
 
-# 登录
+
+
 @main.route('/login/', methods=['GET', 'POST'])
 def login():
+    '''登录'''
     # 如果用户已认证，则重定向到主页
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -72,16 +79,19 @@ def login():
 
     return render_template('login.html', title='Sign In', form=form)
 
-# 登出
+
 @main.route('/logout/')
 def logout():
+    '''登出'''
     # flask_login.logout_user(), 取消登录状态
     logout_user()
     return redirect(url_for('main.index'))
 
-# 注册
+
+
 @main.route('/register/', methods=['GET', 'POST'])
 def register():
+    '''注册'''
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
@@ -96,21 +106,24 @@ def register():
         return redirect(url_for('main.login'))
     return render_template('register.html', title='Register', form=form)
 
-# 查看user profile
+
+
 @main.route('/user/<username>/')
 @login_required
 def user_profile(username):
+    '''查看user profile'''
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
     posts = user.posts.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     next_url = url_for('main.user_profile', username=user.username, page=posts.next_num) if posts.has_next else None
     prev_url = url_for('main.user_profile', username=user.username, page=posts.prev_num) if posts.has_prev else None
-    return render_template('profile.html', user=user, posts=posts.items, next_url=next_url, prev_url=prev_url )
+    return render_template('profile.html', user=user, posts=posts.items, next_url=next_url, prev_url=prev_url)
 
-# 编辑user profile
+
 @main.route('/edit_profile/', methods=['GET', 'POST'])
 @login_required
 def edit_profile():
+    '''编辑user profile'''
     form = EditProfileForm(current_user.username)
     if form.validate_on_submit():
         current_user.username = form.username.data
@@ -124,10 +137,12 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html', title='Edit Profile', form=form)
 
-# 关注
+
+
 @main.route('/follow/<username>')
 @login_required
 def follow(username):
+    '''关注'''
     user = User.query.filter_by(username=username).first()
 
     if user is None:
@@ -144,10 +159,10 @@ def follow(username):
     return redirect(url_for('main.user_profile', username=username))
 
 
-# 取关
 @main.route('/unfollow/<username>')
 @login_required
 def unfollow(username):
+    '''取关'''
     user = User.query.filter_by(username=username).first()
 
     if user is None:
@@ -163,10 +178,11 @@ def unfollow(username):
     flash('unfollowing {} successful!'.format(username))
     return redirect(url_for('main.user_profile', username=username))
 
-# 发现
+
 @main.route('/explore')
 @login_required
 def explore():
+    '''发现其他用户的posts'''
     page = request.args.get('page', 1, type=int)
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(page, current_app.config['POSTS_PER_PAGE'], False)
     # url_for,if the names of those arguments are not referenced in the URL directly, then Flask will include them in the URL as query arguments.
@@ -174,11 +190,14 @@ def explore():
     prev_url = url_for('main.explore', page=posts.prev_num) if posts.has_prev else None
     return render_template('explore.html', title='Explore', posts=posts.items, next_url=next_url, prev_url=prev_url)
 
-# 全文搜索
-# export ELASTICSEARCH_URL='http://localhost:9200'且开启Elasticsearch
+
 @main.route('/search')
 @login_required
 def search():
+    '''
+        全文搜索
+        export ELASTICSEARCH_URL='http://localhost:9200'且开启Elasticsearch
+    '''
     if not g.search_form.validate():
         return redirect(url_for('main.explore'))
     page = request.args.get('page', 1, type=int)
@@ -191,9 +210,25 @@ def search():
     return render_template('search.html', title='Search', posts=posts,
                            next_url=next_url, prev_url=prev_url)
 
-# 扫过名字，显示profile的弹出窗
+
 @main.route('/user/<username>/popup')
 @login_required
 def user_popup(username):
+    '''扫过名字，显示profile的弹出窗'''
     user = User.query.filter_by(username=username).first_or_404()
     return render_template('user_popup.html', user=user)
+
+
+@main.route('/send_messages/<recipient>', methods=['GET', 'POST'])
+@login_required
+def send_message(recipient):
+    '''发送私信'''
+    user = User.query.filter_by(username=recipient).first_or_404()
+    form = MessageForm()
+    if form.validate_on_submit():
+        msg = Message(author=current_user, recipient=user, body=form.message.data)
+        db.session.add(msg)
+        db.session.commit()
+        flash('Your message has been sent')
+        return redirect(url_for('main.user_profile', username=recipient))
+    return render_template('send_message.html', title='Send Message', form=form, recipient=recipient)

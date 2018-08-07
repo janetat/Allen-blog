@@ -99,7 +99,6 @@ class User(db.Model, UserMixin):
         backref=db.backref('followers', lazy='dynamic'),
         lazy='dynamic'
     )
-
     # 与私信相关的字段
     messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', backref='author', lazy='dynamic')
     messages_received = db.relationship('Message', foreign_keys='Message.recipient_id', backref='recipient', lazy='dynamic')
@@ -168,6 +167,7 @@ class Post(SearchableMixin ,db.Model):
 
 # 私信数据库模型
 class Message(db.Model):
+    ''' 还有来自Model User的backref: author, recipient'''
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -175,6 +175,7 @@ class Message(db.Model):
     # SQLALchemy的index=True就是CREATE INDEX 语句
     # what was the last time users read their private messages
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
 
     def __repr__(self):
         return '<Message {}>'.format(self.body)
