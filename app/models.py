@@ -91,7 +91,6 @@ class User(db.Model, UserMixin):
     # 第一个参数为右边的表(因为是自引用关系，所以是自己)，secondary是两表之间的关联表(自引用关系，多对多关系必有第三张表，就是关联表)
     # backref defines how this relationship will be accessed from the right side entity(secondary table).
     # SQLAlchemy ORM，使得followed这个relationship可以当成“列表”来操作。例如,user1.followed.append(user2), user1.followed.remove(user2)
-
     followed = db.relationship(
         'User', secondary=followers,
         primaryjoin=(followers.c.follower_id == id),
@@ -100,6 +99,16 @@ class User(db.Model, UserMixin):
         backref=db.backref('followers', lazy='dynamic'),
         lazy='dynamic'
     )
+
+    # 与私信相关的字段
+    messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', backref='author', lazy='dynamic')
+    messages_received = db.relationship('Message', foreign_keys='Message.recipient_id', backref='recipient', lazy='dynamic')
+    last_message_read_time = db.column(db.DateTime)
+
+    # 返回用户有多少条新的私信。例如应用在导航栏提醒用户有多少条新的私信。
+    def how_many_new_messages(self):
+        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -156,3 +165,16 @@ class Post(SearchableMixin ,db.Model):
 
     def __repr__(self):
         return '<Post {}>'.format(self.title)
+
+# 私信数据库模型
+class Message(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    body = db.Column(db.String(140))
+    # SQLALchemy的index=True就是CREATE INDEX 语句
+    # what was the last time users read their private messages
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
+    def __repr__(self):
+        return '<Message {}>'.format(self.body)
