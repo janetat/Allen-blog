@@ -100,14 +100,19 @@ class User(db.Model, UserMixin):
         lazy='dynamic'
     )
     # 与私信相关的字段
-    messages_sent = db.relationship('Message', foreign_keys='Message.sender_id', backref='author', lazy='dynamic')
-    messages_received = db.relationship('Message', foreign_keys='Message.recipient_id', backref='recipient', lazy='dynamic')
-    last_message_read_time = db.column(db.DateTime)
+    messages_sent = db.relationship('Message',
+                                    foreign_keys='Message.sender_id',
+                                    backref='author', lazy='dynamic')
+    messages_received = db.relationship('Message',
+                                        foreign_keys='Message.recipient_id',
+                                        backref='recipient', lazy='dynamic')
+    last_message_read_time = db.Column(db.DateTime)
 
     # 返回用户有多少条新的私信。例如应用在导航栏提醒用户有多少条新的私信。
-    def how_many_new_messages(self):
+    def new_messages_num(self):
         last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
-        return Message.query.filter_by(recipient=self).filter(Message.timestamp > last_read_time).count()
+        return Message.query.filter_by(recipient=self).filter(
+            Message.timestamp > last_read_time).count()
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -147,13 +152,14 @@ class User(db.Model, UserMixin):
         return followed.union(own).order_by(Post.timestamp.desc())
 
 
+
 # 每次引用current_user, 都会触发这个函数
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
 
 
-class Post(SearchableMixin ,db.Model):
+class Post(SearchableMixin, db.Model):
     __tablename__ = 'post'
     __searchable__ = ['body']
     id = db.Column(db.Integer, primary_key=True)
@@ -165,9 +171,10 @@ class Post(SearchableMixin ,db.Model):
     def __repr__(self):
         return '<Post {}>'.format(self.title)
 
-# 私信数据库模型
+
+
 class Message(db.Model):
-    ''' 还有来自Model User的backref: author, recipient'''
+    '''私信数据库模型, 还有来自Model User的backref: author, recipient'''
     id = db.Column(db.Integer, primary_key=True)
     sender_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     recipient_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -176,6 +183,6 @@ class Message(db.Model):
     # what was the last time users read their private messages
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
-
     def __repr__(self):
         return '<Message {}>'.format(self.body)
+

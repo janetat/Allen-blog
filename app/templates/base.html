@@ -1,5 +1,6 @@
 {% extends 'bootstrap/base.html' %}
 
+
 {% block title %}
     {% if title %}{{ title }} - Allenblog{% else %}Welcome to Allenblog{% endif %}
 {% endblock %}
@@ -26,9 +27,25 @@
                     {% if current_user.is_anonymous %}
                         <li><a href="{{ url_for('main.login') }}">Login</a></li>
                     {% else %}
-                        <li><a href="{{ url_for('main.user_profile', username=current_user.username) }}">Profile</a>
+                        <li>
+                            <a href="{{ url_for('main.check_messages') }}">
+                                Messages
+                                {% set new_messages = current_user.new_messages_num() %}
+                                <span id="message_count" class="label label-danger"
+                                      style="visibility: {% if new_messages %}visible
+                                      {% else %}hidden{% endif %};">
+                                {{ new_messages }}
+
+                            </span>
+                            </a>
                         </li>
-                        <li><a href="{{ url_for('main.check_messages') }}">Messages</a></li>
+
+                        <li>
+                            <a href="{{ url_for('main.user_profile',username=current_user.username) }}">
+                                Profile
+                            </a>
+                        </li>
+
                         <li><a href="{{ url_for('main.logout') }}">Logout</a></li>
 
                     {% endif %}
