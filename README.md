@@ -17,6 +17,7 @@ pip install -r requirements.txt
 
 Database init:
 ```
+flsak db migrate
 flask db upgrade
 ```
 

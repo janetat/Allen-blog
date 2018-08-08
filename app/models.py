@@ -123,18 +123,18 @@ class User(db.Model, UserMixin):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    # 获取头像地址
     def avatar(self, size):
+        '''获取头像地址'''
         digest = md5(self.email.lower().encode('utf-8')).hexdigest()
         return 'https://www.gravatar.com/avatar/{}?d=identicon&s={}'.format(digest, size)
 
-    # 关注
     def follow(self, user):
+        '''关注'''
         if not self.is_following(user):
             self.followed.append(user)
 
-    # 取关
     def unfollow(self, user):
+        '''取关'''
         if self.is_following(user):
             self.followed.remove(user)
 
@@ -152,10 +152,9 @@ class User(db.Model, UserMixin):
         return followed.union(own).order_by(Post.timestamp.desc())
 
 
-
-# 每次引用current_user, 都会触发这个函数
 @login_manager.user_loader
 def load_user(id):
+    '''每次引用current_user, 都会触发这个函数'''
     return User.query.get(int(id))
 
 
@@ -172,7 +171,6 @@ class Post(SearchableMixin, db.Model):
         return '<Post {}>'.format(self.title)
 
 
-
 class Message(db.Model):
     '''私信数据库模型, 还有来自Model User的backref: author, recipient'''
     id = db.Column(db.Integer, primary_key=True)
@@ -185,4 +183,3 @@ class Message(db.Model):
 
     def __repr__(self):
         return '<Message {}>'.format(self.body)
-
