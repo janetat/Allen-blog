@@ -4,7 +4,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 from hashlib import md5
 from app.search import add_to_index, remove_from_index, query_index
-
+import json
+from time import time
 
 class SearchableMixin(object):
     '''
@@ -107,12 +108,9 @@ class User(db.Model, UserMixin):
                                         foreign_keys='Message.recipient_id',
                                         backref='recipient', lazy='dynamic')
     last_message_read_time = db.Column(db.DateTime)
+    # 私信提醒字段
+    notifications = db.relationship('Notification', backref='user', lazy='dynamic')
 
-    # 返回用户有多少条新的私信。例如应用在导航栏提醒用户有多少条新的私信。
-    def new_messages_num(self):
-        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
-        return Message.query.filter_by(recipient=self).filter(
-            Message.timestamp > last_read_time).count()
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -152,6 +150,18 @@ class User(db.Model, UserMixin):
         return followed.union(own).order_by(Post.timestamp.desc())
 
 
+    def new_messages_num(self):
+        '''返回用户有多少条新的私信。例如应用在导航栏提醒用户有多少条新的私信。'''
+        last_read_time = self.last_message_read_time or datetime(1900, 1, 1)
+        return Message.query.filter_by(recipient=self).filter(
+            Message.timestamp > last_read_time).count()
+
+    def add_notification(self, name, data):
+        self.notifications.filter_by(name=name).delete()
+        n = Notification(name=name, payload_json=json.dumps(data), user=self)
+        db.session.add(n)
+        return n
+
 @login_manager.user_loader
 def load_user(id):
     '''每次引用current_user, 都会触发这个函数'''
@@ -183,3 +193,15 @@ class Message(db.Model):
 
     def __repr__(self):
         return '<Message {}>'.format(self.body)
+
+
+class Notification(db.Model):
+    '''私信提醒模型'''
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(128), index=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    timestamp = db.Column(db.Float, index=True, default=time)
+    payload_json = db.Column(db.Text)
+
+    def get_data(self):
+        return json.loads(str(self.payload_json))
