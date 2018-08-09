@@ -1,5 +1,5 @@
 # Allen_blog
-a blog system powered by Flask.
+a blog system powered by Flask, SQLite, SQLAlchemy, Elasticsearch, a lot of flask-extensions.
 
 Learn by doing.
 
@@ -8,6 +8,7 @@ Learn by doing.
 2. 全文搜索(Full-text search)，用Elasticsearch和SQLALchemy实现
 3. 发送私信
 4. 动态提醒私信(自动更新未读私信数字)，用polling(AJAX)实现. 
+5. 自动生成用户和posts脚本
 
 
 # How to run
@@ -54,3 +55,6 @@ fake_posts(1000)
 # Ref
 1.  [miguelgrinberg/flasky](https://github.com/miguelgrinberg/flasky)
 2.  [The Flask Mega Tutorial](https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-xiv-ajax)
+
+# Preview
+![image](./Note/preview1.png)
