@@ -1,7 +1,14 @@
 # Allen_blog
-a blog system powered by Flask, SQLite, Elasticsearch.
+a blog system powered by Flask.
 
 Learn by doing.
+
+# Features
+1. 鼠标hover 名字 --> 弹出个人profile框(AJAX)
+2. 全文搜索(Full-text search)，用Elasticsearch和SQLALchemy实现
+3. 发送私信
+4. 动态提醒私信(自动更新未读私信数字)，用polling(AJAX)实现. 
+
 
 # How to run
 Run the app
